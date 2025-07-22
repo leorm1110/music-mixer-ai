@@ -1,0 +1,10 @@
+flask
+flask-cors
+Werkzeug
+demucs
+moviepy==1.0.3
+PySoundFile
+torch
+torchaudio
+ffmpeg-python
+gunicorn

@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+/venv/
+
+# Output files
+/output/
+
+# OS-specific
+.DS_Store

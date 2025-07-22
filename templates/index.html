@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Mixer AI</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>MusicMixerAI</h1>
+        <p>Carica un file audio o video per separare le tracce musicali con l'IA.</p>
+    </header>
+    <main>
+        <div id="upload-area" class="uploader">
+            <input type="file" id="audio-upload" accept="audio/*,video/*" class="hidden">
+            <label for="audio-upload" id="upload-label">
+                <p>Trascina qui il tuo file audio/video o <strong>clicca per selezionare</strong>.</p>
+                <p class="file-types">L'audio verrà estratto automaticamente dai file video.</p>
+            </label>
+        </div>
+        <div id="loader" class="hidden">
+            <div class="spinner"></div>
+            <p>Separazione delle tracce in corso... Potrebbe richiedere un momento.</p>
+        </div>
+        <div id="mixer" class="mixer-container hidden">
+            <div id="main-controls" class="hidden">
+                <button id="restart-button">Carica un Altro File</button>
+                <div class="playback-controls">
+                    <button id="play-pause-button" class="play-button"></button>
+                    <span id="current-time">0:00</span>
+                    <input type="range" id="seek-bar" value="0" step="0.1">
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+            <div id="track-list">
+                <!-- Le tracce del mixer verranno generate qui dinamicamente -->
+            </div>
+        </div>
+    </main>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
