@@ -29,7 +29,8 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = os.urandom(24)  # Necessary for session management
 CORS(app)
 
-# --- Configuration ---
+# --- Model and File Configuration (v2) ---
+# Aggiungo un commento per forzare l'aggiornamento del file su GitHub e risolvere l'errore di deployment.
 logging.basicConfig(level=logging.INFO)
 OUTPUT_FOLDER = Path('output')
 OUTPUT_FOLDER.mkdir(exist_ok=True)
