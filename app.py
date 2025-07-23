@@ -8,9 +8,7 @@ from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
-from demucs.apply import apply_model
-from demucs.models import get_model
-from demucs.separate import load_track
+from demucs.api import Separator
 import torch
 import torchaudio
 
@@ -68,37 +66,38 @@ def upload_file():
             logging.error(f"FFmpeg conversion failed: {e.stderr.decode()}")
             return jsonify({'error': 'Failed to convert audio file.'}), 500
 
-        # --- Audio Separation with Demucs ---
-        logging.info("Starting audio separation with Demucs (htdemucs_ft)...")
+        # --- Audio Separation with Demucs v4 API ---
+        logging.info("Starting audio separation with Demucs v4 (htdemucs_ft)...")
         try:
-            model = get_model('htdemucs_ft')
-            model.cpu()
-            model.eval()
+            # 1. Initialize the Separator model
+            # Using the 'htdemucs_ft' model which is a high-quality fine-tuned model.
+            # We specify 'cpu' device as it's more reliable on free hosting tiers.
+            separator = Separator(model='htdemucs_ft', device='cpu')
 
-            wav, sr = load_track(wav_filepath, model.audio_channels, model.samplerate)
+            # 2. Load the audio file
+            wav, sr = torchaudio.load(wav_filepath)
 
-            ref = wav.mean(0)
-            wav = (wav - ref.mean()) / ref.std()
-            
-            sources = apply_model(model, wav[None], device='cpu', shifts=1, split=True, overlap=.25, progress=True)[0]
-            sources = sources * ref.std() + ref.mean()
-
+            # 3. Separate the tracks
+            # The separate_tensor method returns the original mix and a dictionary of separated tracks.
+            logging.info("Applying separation model...")
+            _, separated_tracks = separator.separate_tensor(wav, sr)
             logging.info("Separation complete. Saving tracks...")
 
             track_urls = []
-            for i, source in enumerate(sources):
-                stem = model.sources[i]
-                safe_stem_name = stem.replace('/', '_') 
-                track_filename = f"{safe_stem_name}.wav"
+            # The `separated_tracks` dict contains tensors for 'vocals', 'drums', etc.
+            for stem, source in separated_tracks.items():
+                track_filename = f"{stem}.wav"
                 track_path = session_dir / track_filename
                 
-                torchaudio.save(str(track_path), source, model.samplerate)
+                # Save the separated track tensor to a file
+                torchaudio.save(str(track_path), source, sr)
                 
+                # Create a URL-friendly path for the frontend
                 url_path = f"/output/{session_id}/{track_filename}"
                 track_urls.append({'name': stem.capitalize(), 'url': url_path})
 
         except Exception as e:
-            logging.error(f"Demucs separation failed: {e}")
+            logging.error(f"Demucs separation failed: {e}", exc_info=True)
             return jsonify({'error': 'Failed to process audio with Demucs.'}), 500
 
         return jsonify({'tracks': track_urls, 'path': session_id})
