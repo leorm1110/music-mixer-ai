@@ -1,10 +1,14 @@
-flask
-flask-cors
-Werkzeug
+# Flask and Web Server
+Flask
+Flask-Cors
+gunicorn
+
+# Demucs and Audio Processing
 demucs
-moviepy==1.0.3
-PySoundFile
+ffmpeg-python
+
+# PyTorch for CPU
+# We specify the index-url to download CPU-only versions of torch and torchaudio
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch
 torchaudio
-ffmpeg-python
-gunicorn
