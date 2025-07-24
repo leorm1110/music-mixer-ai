@@ -10,6 +10,10 @@ RUN apt-get update && apt-get install -y ffmpeg
 # 4. Copia il file delle dipendenze e installale
 # Questo passaggio viene eseguito separatamente per sfruttare la cache di Docker
 COPY requirements.txt .
+# Install demucs directly from GitHub to bypass potential packaging issues
+RUN pip install --no-cache-dir git+https://github.com/facebookresearch/demucs#egg=demucs
+
+# Install other dependencies from requirements.txt
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 

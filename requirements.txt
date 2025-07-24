@@ -4,7 +4,6 @@ Flask-Cors
 gunicorn
 
 # Demucs and Audio Processing
-demucs
 ffmpeg-python
 
 # PyTorch for CPU
