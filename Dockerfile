@@ -5,7 +5,7 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # 3. Aggiorna il package manager e installa ffmpeg
-RUN apt-get update && apt-get install -y ffmpeg
+RUN apt-get update && apt-get install -y ffmpeg git
 
 # 4. Copia il file delle dipendenze e installale
 # Questo passaggio viene eseguito separatamente per sfruttare la cache di Docker
